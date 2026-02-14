@@ -1,106 +1,219 @@
-// It fetches your data and injects a script into the current tab.
+document.addEventListener('DOMContentLoaded', () => {
+    const mainView = document.getElementById('mainView');
+    const editView = document.getElementById('editView');
+    const statusBanner = document.getElementById('statusBanner');
+    const fields = ['fullName', 'firstName', 'lastName', 'email', 'phone', 'address', 'city', 'state', 'zip', 'country', 'linkedin', 'github'];
 
-document.getElementById('fillBtn').addEventListener('click', async () => {
-    const statusDiv = document.getElementById('status');
-    statusDiv.textContent = "Fetching data...";
+    // --- Load profile preview ---
+    function loadPreview() {
+        chrome.storage.local.get(['profile'], (result) => {
+            const preview = document.getElementById('profilePreview');
+            if (result.profile && result.profile.firstName) {
+                const p = result.profile;
+                const initials = (p.firstName[0] || '') + (p.lastName?.[0] || '');
+                preview.innerHTML = `
+                    <div class="avatar">${initials.toUpperCase()}</div>
+                    <div class="profile-info">
+                        <div class="name">${p.firstName} ${p.lastName || ''}</div>
+                        <div class="email">${p.email || 'No email saved'}</div>
+                    </div>
+                `;
+            }
+        });
+    }
+    loadPreview();
 
-    try {
-        // 1. Get data from your Localhost Backend
-        const response = await fetch('http://localhost:5000/api/profile');
-        const data = await response.json();
+    // --- Load form fields ---
+    function loadForm() {
+        chrome.storage.local.get(['profile'], (result) => {
+            if (result.profile) {
+                fields.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && result.profile[id]) el.value = result.profile[id];
+                });
+            }
+        });
+    }
 
-        // 2. Find the current active tab in Chrome
-        let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    // --- Show status ---
+    function showStatus(message, type) {
+        statusBanner.textContent = message;
+        statusBanner.className = 'status-banner ' + type;
+        setTimeout(() => { statusBanner.className = 'status-banner'; }, 3000);
+    }
 
-        // 3. Inject the "filler script" into that tab
-        chrome.scripting.executeScript({
-            target: { tabId: tab.id },
-            func: autoFillScript,   // The function below to run inside the page
-            args: [data]            // Pass the DB data to that function
+    // --- Switch views ---
+    function showMain() {
+        editView.classList.remove('active');
+        mainView.classList.add('active');
+        loadPreview();
+    }
+
+    function showEdit() {
+        mainView.classList.remove('active');
+        editView.classList.add('active');
+        loadForm();
+    }
+
+    // --- Close ---
+    document.getElementById('closeBtn').addEventListener('click', () => window.close());
+
+    // --- Edit Profile ---
+    document.getElementById('settingsBtn').addEventListener('click', showEdit);
+
+    // --- Back ---
+    document.getElementById('backBtn').addEventListener('click', showMain);
+
+    // --- Save ---
+    document.getElementById('saveBtn').addEventListener('click', () => {
+        const profile = {};
+        fields.forEach(id => {
+            profile[id] = document.getElementById(id).value;
         });
 
-        statusDiv.textContent = "✅ Injected!";
-    } catch (error) {
-        statusDiv.textContent = "❌ Error: Could not connect to backend.";
-        console.error(error);
-    }
-});
-
-
-// --- THIS FUNCTION RUNS INSIDE THE WEBPAGE (NAUKRI, GOOGLE FORMS, ETC) ---
-
-
-function autoFillScript(profile) {
-    console.log("👻 GhostWriter is scanning the page...");
-
-    // Helper to fill a single field safely
-    const fillField = (input, value) => {
-        if (!value) return;
-        input.value = value;
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-        input.dispatchEvent(new Event('change', { bubbles: true }));
-        input.style.backgroundColor = "#e6f7ff"; // Light Blue
-        input.style.border = "2px solid #007bff";
-    };
-
-    // Find all inputs and textareas
-    const inputs = document.querySelectorAll('input, textarea');
-
-    inputs.forEach(input => {
-        // Get the input's "fingerprint" (id, name, placeholder, label)
-        const name = (input.name || '').toLowerCase();
-        const id = (input.id || '').toLowerCase();
-        const placeholder = (input.placeholder || '').toLowerCase();
-        const type = (input.type || '').toLowerCase();
-
-        // Try to find an associated label
-        let label = '';
-        if (input.id) {
-            const labelEl = document.querySelector(`label[for="${input.id}"]`);
-            if (labelEl) label = labelEl.textContent.toLowerCase();
-        }
-
-        // Skip hidden fields or checkboxes
-        if (type === 'hidden' || type === 'checkbox' || type === 'radio') return;
-
-        // Combine all attributes into one string to search easily
-        const attributes = `${name} ${id} ${placeholder} ${label}`;
-
-        // 1. Check for "First Name" specific fields
-        if (attributes.includes('first') || attributes.includes('fname') || attributes.includes('given')) {
-            fillField(input, profile.firstName);
-            return;
-        }
-
-        // 2. Check for "Last Name" specific fields
-        if (attributes.includes('last') || attributes.includes('lname') || attributes.includes('surname') || attributes.includes('family')) {
-            fillField(input, profile.lastName);
-            return;
-        }
-
-        // 3. Check for "Full Name"
-        if (attributes.includes('fullname') || attributes.includes('full name') || name === 'name') {
-            fillField(input, `${profile.firstName} ${profile.lastName}`);
-            return;
-        }
-
-        // 4. Email
-        if (attributes.includes('email') || attributes.includes('mail')) {
-            fillField(input, profile.email);
-            return;
-        }
-
-        // 5. Phone
-        if (attributes.includes('phone') || attributes.includes('mobile') || attributes.includes('contact') || type === 'tel') {
-            fillField(input, profile.phone);
-            return;
-        }
-
-        // 6. Links (LinkedIn/GitHub)
-        if (attributes.includes('linkedin')) fillField(input, profile.linkedin);
-        if (attributes.includes('github') || attributes.includes('portfolio')) fillField(input, profile.github);
+        chrome.storage.local.set({ profile }, () => {
+            showMain();
+            showStatus("Profile saved!", "success");
+        });
     });
 
-    alert("👻 GhostWriter finished!");
-}
+    // --- Auto-Fill ---
+    document.getElementById('fillBtn').addEventListener('click', async () => {
+        chrome.storage.local.get(['profile'], async (result) => {
+            const data = result.profile;
+            if (!data || !data.firstName) {
+                showStatus("No profile saved - Edit Profile first", "error");
+                return;
+            }
+            let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                func: autoFillScript,
+                args: [data]
+            });
+            showStatus("Auto-fill injected successfully!", "success");
+        });
+    });
+});
 
+// --- THE INJECTED SCRIPT (React/Angular compatible) ---
+function autoFillScript(profile) {
+    console.log("GhostWriter running...", profile);
+    const inputs = document.querySelectorAll('input, textarea, select');
+    let filledCount = 0;
+
+    // React-compatible value setter — bypasses React's controlled component state
+    const fillField = (input, value) => {
+        if (!value) return;
+
+        // Use native setter to bypass React/Angular state management
+        const nativeSetter =
+            Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set ||
+            Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')?.set;
+
+        if (nativeSetter) {
+            nativeSetter.call(input, value);
+        } else {
+            input.value = value;
+        }
+
+        // Dispatch all events React/Angular listen for
+        input.dispatchEvent(new Event('focus', { bubbles: true }));
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        input.dispatchEvent(new Event('blur', { bubbles: true }));
+
+        // Also trigger React 16+ synthetic events
+        const reactEvent = new Event('input', { bubbles: true });
+        Object.defineProperty(reactEvent, 'target', { value: input });
+        input.dispatchEvent(reactEvent);
+
+        input.style.backgroundColor = "#e6f7ff";
+        input.style.border = "2px solid #007bff";
+        filledCount++;
+    };
+
+    // Gather all possible identifying text for a field
+    function getFieldSignature(input) {
+        const parts = [];
+        parts.push(input.name || '');
+        parts.push(input.id || '');
+        parts.push(input.placeholder || '');
+        parts.push(input.getAttribute('aria-label') || '');
+        parts.push(input.getAttribute('data-label') || '');
+        parts.push(input.getAttribute('autocomplete') || '');
+
+        // Check <label> elements
+        if (input.labels && input.labels.length > 0) {
+            input.labels.forEach(l => parts.push(l.innerText || ''));
+        }
+
+        // Check for label by "for" attribute
+        if (input.id) {
+            const labelFor = document.querySelector(`label[for="${input.id}"]`);
+            if (labelFor) parts.push(labelFor.innerText || '');
+        }
+
+        // Check nearby text (parent/sibling labels, spans, divs)
+        const parent = input.closest('div, fieldset, li, td');
+        if (parent) {
+            const nearby = parent.querySelectorAll('label, span, p, div.label, div[class*="label"]');
+            nearby.forEach(el => {
+                if (el.innerText && el.innerText.length < 50) {
+                    parts.push(el.innerText);
+                }
+            });
+        }
+
+        return parts.join(' ').toLowerCase();
+    }
+
+    inputs.forEach(input => {
+        const sig = getFieldSignature(input);
+
+        // Name fields — check "first" before generic "name"
+        if (sig.includes('first') || sig.includes('fname') || sig.includes('given name')) {
+            fillField(input, profile.firstName);
+        }
+        else if (sig.includes('last') || sig.includes('lname') || sig.includes('surname') || sig.includes('family name')) {
+            fillField(input, profile.lastName);
+        }
+        else if (sig.includes('full name') || sig.includes('fullname') || sig.includes('your name')
+                 || input.name === 'name' || input.id === 'name'
+                 || input.getAttribute('autocomplete') === 'name') {
+            fillField(input, profile.fullName || `${profile.firstName} ${profile.lastName}`);
+        }
+        // Contact
+        else if (sig.includes('email') || sig.includes('e-mail') || input.type === 'email') {
+            fillField(input, profile.email);
+        }
+        else if (sig.includes('phone') || sig.includes('mobile') || sig.includes('contact number') || input.type === 'tel') {
+            fillField(input, profile.phone);
+        }
+        // Address
+        else if (sig.includes('address') || sig.includes('street')) {
+            fillField(input, profile.address);
+        }
+        else if (sig.includes('city') || sig.includes('town')) {
+            fillField(input, profile.city);
+        }
+        else if (sig.includes('state') || sig.includes('province') || sig.includes('region')) {
+            fillField(input, profile.state);
+        }
+        else if (sig.includes('zip') || sig.includes('postal') || sig.includes('pincode') || sig.includes('pin code')) {
+            fillField(input, profile.zip);
+        }
+        else if (sig.includes('country') || sig.includes('nation')) {
+            fillField(input, profile.country);
+        }
+        // Links
+        else if (sig.includes('linkedin')) {
+            fillField(input, profile.linkedin);
+        }
+        else if (sig.includes('github') || sig.includes('portfolio') || sig.includes('website')) {
+            fillField(input, profile.github);
+        }
+    });
+
+    console.log(`GhostWriter filled ${filledCount} fields`);
+}

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>GhostWriter - Edit Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0920;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        /* --- Centered Brand Header --- */
+        .brand-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .brand-header img {
+            width: 64px;
+            height: 64px;
+            border-radius: 14px;
+        }
+
+        .brand-header span {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- Card --- */
+        .card {
+            background: #151338;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 32px;
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .card-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .card-header p {
+            font-size: 13px;
+            color: #5a5a8a;
+        }
+
+        /* --- Form --- */
+        .form-row {
+            display: flex;
+            gap: 14px;
+        }
+
+        .form-group {
+            flex: 1;
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #6a6a9a;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s, background 0.2s;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #3a3a6a;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #6c5ce7;
+            background: rgba(108, 92, 231, 0.06);
+        }
+
+        /* --- Divider --- */
+        .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+            margin: 6px 0 20px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #5a5a8a;
+            margin-bottom: 16px;
+        }
+
+        /* --- Buttons --- */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .save-btn {
+            flex: 1;
+            padding: 14px;
+            background: linear-gradient(135deg, #6c5ce7, #a855f7);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+
+        .save-btn:hover {
+            opacity: 0.9;
+        }
+
+        .save-btn:active {
+            transform: scale(0.98);
+        }
+
+        .goback-btn {
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            color: #a0a0d0;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .goback-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .goback-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* --- Status --- */
+        #status {
+            text-align: center;
+            margin-top: 16px;
+            font-weight: 600;
+            font-size: 13px;
+            height: 20px;
+            transition: all 0.3s ease;
+        }
+
+        #status.success {
+            color: #2ed573;
+        }
+
+        #status.error {
+            color: #ff6b81;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Centered Brand Header -->
+        <div class="brand-header">
+            <img src="Images/icon128.png" alt="GhostWriter">
+            <span>GhostWriter</span>
+        </div>
+
+        <!-- Card -->
+        <div class="card">
+            <div class="card-header">
+                <h1>Edit Profile</h1>
+                <p>Your info is saved locally in the browser</p>
+            </div>
+
+            <!-- Personal Info -->
+            <div class="section-title">Personal Info</div>
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="fullName" placeholder="John Doe">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" id="firstName" placeholder="John">
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" id="lastName" placeholder="Doe">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" placeholder="john@example.com">
+            </div>
+
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" id="phone" placeholder="+91 98765 43210">
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Address -->
+            <div class="section-title">Address</div>
+            <div class="form-group">
+                <label>Address</label>
+                <textarea id="address" placeholder="123 Main Street, Apt 4B"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" id="city" placeholder="Mumbai">
+                </div>
+                <div class="form-group">
+                    <label>State</label>
+                    <input type="text" id="state" placeholder="Maharashtra">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Zip / Pincode</label>
+                    <input type="text" id="zip" placeholder="400001">
+                </div>
+                <div class="form-group">
+                    <label>Country</label>
+                    <input type="text" id="country" placeholder="India">
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Social Links -->
+            <div class="section-title">Social Links</div>
+            <div class="form-group">
+                <label>LinkedIn URL</label>
+                <input type="text" id="linkedin" placeholder="https://linkedin.com/in/yourname">
+            </div>
+
+            <div class="form-group">
+                <label>GitHub URL</label>
+                <input type="text" id="github" placeholder="https://github.com/yourname">
+            </div>
+
+            <!-- Buttons -->
+            <div class="btn-group">
+                <button id="gobackBtn" class="goback-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                    Back
+                </button>
+                <button id="saveBtn" class="save-btn">Save Profile</button>
+            </div>
+
+            <div id="status"></div>
+        </div>
+    </div>
+
+    <script src="options.js"></script>
+</body>
+
+</html>

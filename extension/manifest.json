@@ -2,17 +2,24 @@
   "manifest_version": 3,
   "name": "GhostWriter",
   "version": "1.0",
-  "description": "Auto-fill job applications from my MERN stack DB.",
+  "description": "Auto-fill job applications with your saved profile.",
   "permissions": [
     "activeTab",
     "scripting",
-    "storage"
+    "storage",
+    "tabs"
   ],
-  "host_permissions": [
-    "http://localhost:5000/*"
-  ],
+  "icons": {
+    "16": "Images/icon16.png",
+    "48": "Images/icon48.png",
+    "128": "Images/icon128.png"
+  },
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "Images/icon.png"
+    "default_icon": {
+      "16": "Images/icon16.png",
+      "48": "Images/icon48.png",
+      "128": "Images/icon128.png"
+    }
   }
 }

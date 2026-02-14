@@ -2,46 +2,527 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            width: 200px;
-            padding: 15px;
-            font-family: sans-serif;
+            width: 320px;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f0e2a;
+            color: #e0e0e0;
+        }
+
+        /* === SHARED === */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: linear-gradient(135deg, #151338 0%, #1a1840 100%);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand img {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+        }
+
+        .brand span {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: none;
+            cursor: pointer;
+            color: #666;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #aaa;
+        }
+
+        .close-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Status Banner */
+        .status-banner {
+            display: none;
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 500;
             text-align: center;
         }
 
-        h3 {
-            margin-top: 0;
-            color: #333;
+        .status-banner.success {
+            display: block;
+            background: rgba(46, 213, 115, 0.15);
+            color: #2ed573;
         }
 
-        button {
-            background: #007bff;
+        .status-banner.error {
+            display: block;
+            background: rgba(255, 71, 87, 0.15);
+            color: #ff6b81;
+        }
+
+        /* === MAIN VIEW === */
+        .section-label {
+            padding: 18px 20px 8px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #5a5a8a;
+        }
+
+        .menu-list {
+            padding: 0 10px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+            color: inherit;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .menu-item:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .icon-fill {
+            background: linear-gradient(135deg, #6c5ce7, #a855f7);
+        }
+
+        .icon-profile {
+            background: linear-gradient(135deg, #00b4d8, #48cae4);
+        }
+
+        .menu-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .menu-text {
+            flex: 1;
+        }
+
+        .menu-text .title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #f0f0f0;
+        }
+
+        .menu-text .subtitle {
+            font-size: 12px;
+            color: #6a6a9a;
+            margin-top: 2px;
+        }
+
+        .menu-arrow svg {
+            width: 16px;
+            height: 16px;
+            color: #4a4a7a;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 14px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            margin-top: 8px;
+        }
+
+        .profile-preview {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6c5ce7, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .profile-info .name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+
+        .profile-info .email {
+            font-size: 11px;
+            color: #5a5a8a;
+        }
+
+        .no-profile {
+            font-size: 12px;
+            color: #5a5a8a;
+            font-style: italic;
+        }
+
+        /* === EDIT VIEW === */
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        .edit-body {
+            padding: 16px 20px;
+            max-height: 420px;
+            overflow-y: auto;
+        }
+
+        .edit-body::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .edit-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .edit-body::-webkit-scrollbar-thumb {
+            background: #2a2a5a;
+            border-radius: 4px;
+        }
+
+        .edit-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .edit-subtitle {
+            font-size: 11px;
+            color: #5a5a8a;
+            margin-bottom: 16px;
+        }
+
+        .form-section {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #5a5a8a;
+            margin: 14px 0 10px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-group {
+            flex: 1;
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6a6a9a;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 9px 11px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group textarea {
+            resize: none;
+            height: 50px;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #3a3a6a;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #6c5ce7;
+        }
+
+        .form-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+            margin: 4px 0 10px;
+        }
+
+        /* Edit buttons */
+        .edit-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            padding-bottom: 4px;
+        }
+
+        .btn-back {
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            color: #a0a0d0;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .btn-back svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .btn-save {
+            flex: 1;
+            padding: 10px;
+            background: linear-gradient(135deg, #6c5ce7, #a855f7);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            width: 100%;
-            font-weight: bold;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            transition: opacity 0.15s;
         }
 
-        button:hover {
-            background: #0056b3;
+        .btn-save:hover {
+            opacity: 0.9;
         }
 
-        #status {
-            margin-top: 10px;
-            font-size: 12px;
-            color: green;
+        .btn-save:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
 
 <body>
-    <h3>👻 GhostWriter</h3>
-    <button id="fillBtn">Auto-Fill Page</button>
-    <div id="status"></div>
+    <!-- ========== MAIN VIEW ========== -->
+    <div id="mainView" class="view active">
+        <div class="header">
+            <div class="brand">
+                <img src="Images/icon128.png" alt="GhostWriter">
+                <span>GhostWriter</span>
+            </div>
+            <button class="close-btn" id="closeBtn" title="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+        </div>
+
+        <div id="statusBanner" class="status-banner"></div>
+
+        <div class="section-label">Quick Actions</div>
+        <div class="menu-list">
+            <button id="fillBtn" class="menu-item">
+                <div class="menu-icon icon-fill">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                </div>
+                <div class="menu-text">
+                    <div class="title">Auto-Fill Page</div>
+                    <div class="subtitle">Fill forms on this page</div>
+                </div>
+                <div class="menu-arrow">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+            </button>
+        </div>
+
+        <div class="section-label">Settings</div>
+        <div class="menu-list">
+            <button id="settingsBtn" class="menu-item">
+                <div class="menu-icon icon-profile">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+                <div class="menu-text">
+                    <div class="title">Edit Profile</div>
+                    <div class="subtitle">Manage your saved info</div>
+                </div>
+                <div class="menu-arrow">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+            </button>
+        </div>
+
+        <div class="footer">
+            <div id="profilePreview" class="profile-preview">
+                <span class="no-profile">No profile saved yet</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== EDIT VIEW ========== -->
+    <div id="editView" class="view">
+        <div class="header">
+            <div class="brand">
+                <img src="Images/icon128.png" alt="GhostWriter">
+                <span>Edit Profile</span>
+            </div>
+        </div>
+
+        <div class="edit-body">
+            <div class="edit-title">Your Info</div>
+            <div class="edit-subtitle">Saved locally in your browser</div>
+
+            <div class="form-section">Personal</div>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="fullName" placeholder="John Doe">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" id="firstName" placeholder="John">
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" id="lastName" placeholder="Doe">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" placeholder="john@example.com">
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" id="phone" placeholder="+91 98765 43210">
+            </div>
+
+            <div class="form-divider"></div>
+            <div class="form-section">Address</div>
+            <div class="form-group">
+                <label>Street Address</label>
+                <textarea id="address" placeholder="123 Main Street"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" id="city" placeholder="Mumbai">
+                </div>
+                <div class="form-group">
+                    <label>State</label>
+                    <input type="text" id="state" placeholder="Maharashtra">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Pincode</label>
+                    <input type="text" id="zip" placeholder="400001">
+                </div>
+                <div class="form-group">
+                    <label>Country</label>
+                    <input type="text" id="country" placeholder="India">
+                </div>
+            </div>
+
+            <div class="form-divider"></div>
+            <div class="form-section">Links</div>
+            <div class="form-group">
+                <label>LinkedIn</label>
+                <input type="text" id="linkedin" placeholder="https://linkedin.com/in/you">
+            </div>
+            <div class="form-group">
+                <label>GitHub</label>
+                <input type="text" id="github" placeholder="https://github.com/you">
+            </div>
+
+            <div class="edit-actions">
+                <button id="backBtn" class="btn-back">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                    Back
+                </button>
+                <button id="saveBtn" class="btn-save">Save Profile</button>
+            </div>
+        </div>
+    </div>
+
     <script src="popup.js"></script>
 </body>
 
