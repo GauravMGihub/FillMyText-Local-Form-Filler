@@ -34,51 +34,73 @@ function autoFillScript(profile) {
     console.log("👻 GhostWriter is scanning the page...");
 
     // Helper to fill a single field safely
-
-    const fillInput = (keywords, value) => {
+    const fillField = (input, value) => {
         if (!value) return;
-
-        // Find all inputs and textareas
-        const inputs = document.querySelectorAll('input, textarea');
-
-        inputs.forEach(input => {
-            // Get the input's "fingerprint" (id, name, placeholder, label)
-            const name = (input.name || '').toLowerCase();
-            const id = (input.id || '').toLowerCase();
-            const placeholder = (input.placeholder || '').toLowerCase();
-            const type = (input.type || '').toLowerCase();
-    // Skip hidden fields or checkboxes for now
-            if (type === 'hidden' || type === 'checkbox' || type === 'radio') return;
-    // Check if any keyword matches
-            const isMatch = keywords.some(key => 
-                name.includes(key) || id.includes(key) || placeholder.includes(key)
-            );
-            if (isMatch) {
-                input.value = value;
-            
-                // 2. DISPATCH EVENTS (Crucial for React/Angular sites like Naukri!)
-                // Without this, the website won't "know" you typed anything.
-            
-                input.dispatchEvent(new Event('input', { bubbles: true }));
-                input.dispatchEvent(new Event('change', { bubbles: true }));
-
-                // 3. Visual feedback (Turn it light blue)
-                input.style.backgroundColor = "#e6f7ff";
-                input.style.border = "2px solid #007bff";
-            }
-        });
+        input.value = value;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        input.style.backgroundColor = "#e6f7ff"; // Light Blue
+        input.style.border = "2px solid #007bff";
     };
 
-    // --- MAPPING LOGIC ---
-    // We map your DB fields to common HTML keywords
+    // Find all inputs and textareas
+    const inputs = document.querySelectorAll('input, textarea');
 
-    fillInput(['first', 'fname', 'given'], profile.firstName);
-    fillInput(['last', 'lname', 'surname'], profile.lastName);
-    fillInput(['email', 'mail'], profile.email);
-    fillInput(['phone', 'mobile', 'contact', 'tel'], profile.phone);
-    fillInput(['linkedin', 'link'], profile.linkedin);
-    fillInput(['github', 'git', 'repo'], profile.github);
+    inputs.forEach(input => {
+        // Get the input's "fingerprint" (id, name, placeholder, label)
+        const name = (input.name || '').toLowerCase();
+        const id = (input.id || '').toLowerCase();
+        const placeholder = (input.placeholder || '').toLowerCase();
+        const type = (input.type || '').toLowerCase();
 
-    alert("👻 GhostWriter finished filling!");
+        // Try to find an associated label
+        let label = '';
+        if (input.id) {
+            const labelEl = document.querySelector(`label[for="${input.id}"]`);
+            if (labelEl) label = labelEl.textContent.toLowerCase();
+        }
 
+        // Skip hidden fields or checkboxes
+        if (type === 'hidden' || type === 'checkbox' || type === 'radio') return;
+
+        // Combine all attributes into one string to search easily
+        const attributes = `${name} ${id} ${placeholder} ${label}`;
+
+        // 1. Check for "First Name" specific fields
+        if (attributes.includes('first') || attributes.includes('fname') || attributes.includes('given')) {
+            fillField(input, profile.firstName);
+            return;
+        }
+
+        // 2. Check for "Last Name" specific fields
+        if (attributes.includes('last') || attributes.includes('lname') || attributes.includes('surname') || attributes.includes('family')) {
+            fillField(input, profile.lastName);
+            return;
+        }
+
+        // 3. Check for "Full Name"
+        if (attributes.includes('fullname') || attributes.includes('full name') || name === 'name') {
+            fillField(input, `${profile.firstName} ${profile.lastName}`);
+            return;
+        }
+
+        // 4. Email
+        if (attributes.includes('email') || attributes.includes('mail')) {
+            fillField(input, profile.email);
+            return;
+        }
+
+        // 5. Phone
+        if (attributes.includes('phone') || attributes.includes('mobile') || attributes.includes('contact') || type === 'tel') {
+            fillField(input, profile.phone);
+            return;
+        }
+
+        // 6. Links (LinkedIn/GitHub)
+        if (attributes.includes('linkedin')) fillField(input, profile.linkedin);
+        if (attributes.includes('github') || attributes.includes('portfolio')) fillField(input, profile.github);
+    });
+
+    alert("👻 GhostWriter finished!");
 }
+
