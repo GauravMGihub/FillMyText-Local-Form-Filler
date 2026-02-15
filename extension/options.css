@@ -1,0 +1,423 @@
+:root {
+    --bg-primary: #0a0920;
+    --bg-card: #151338;
+    --bg-card-border: rgba(255, 255, 255, 0.06);
+    --text-primary: #e0e0e0;
+    --text-heading: #ffffff;
+    --text-muted: #5a5a8a;
+    --text-label: #6a6a9a;
+    --text-placeholder: #3a3a6a;
+    --input-bg: rgba(255, 255, 255, 0.04);
+    --input-border: rgba(255, 255, 255, 0.1);
+    --input-focus-border: #6c5ce7;
+    --input-focus-bg: rgba(108, 92, 231, 0.06);
+    --divider: rgba(255, 255, 255, 0.06);
+    --btn-back-bg: rgba(255, 255, 255, 0.06);
+    --btn-back-border: rgba(255, 255, 255, 0.08);
+    --btn-back-text: #a0a0d0;
+    --btn-back-hover-bg: rgba(255, 255, 255, 0.1);
+    --success-color: #2ed573;
+    --error-color: #ff6b81;
+    --remove-bg: rgba(255, 71, 87, 0.12);
+    --remove-border: rgba(255, 71, 87, 0.2);
+    --remove-hover-bg: rgba(255, 71, 87, 0.25);
+    --badge-bg: rgba(108, 92, 231, 0.2);
+    --badge-color: #a78bfa;
+    --empty-state-bg: rgba(255, 255, 255, 0.02);
+    --empty-state-border: rgba(255, 255, 255, 0.08);
+    --empty-state-color: #4a4a7a;
+    --toggle-bg: rgba(255, 255, 255, 0.06);
+    --toggle-color: #888;
+    --toggle-hover-bg: rgba(255, 255, 255, 0.12);
+    --toggle-hover-color: #ccc;
+}
+
+[data-theme="light"] {
+    --bg-primary: #f0eef6;
+    --bg-card: #ffffff;
+    --bg-card-border: rgba(108, 92, 231, 0.1);
+    --text-primary: #2d2b42;
+    --text-heading: #1a1833;
+    --text-muted: #8886a2;
+    --text-label: #6e6b8a;
+    --text-placeholder: #b0aec8;
+    --input-bg: #f8f7fc;
+    --input-border: rgba(0, 0, 0, 0.12);
+    --input-focus-border: #6c5ce7;
+    --input-focus-bg: rgba(108, 92, 231, 0.04);
+    --divider: rgba(0, 0, 0, 0.07);
+    --btn-back-bg: #f0eef8;
+    --btn-back-border: rgba(108, 92, 231, 0.15);
+    --btn-back-text: #6e6b8a;
+    --btn-back-hover-bg: rgba(108, 92, 231, 0.1);
+    --success-color: #1fa855;
+    --error-color: #e04050;
+    --remove-bg: rgba(255, 71, 87, 0.08);
+    --remove-border: rgba(255, 71, 87, 0.15);
+    --remove-hover-bg: rgba(255, 71, 87, 0.18);
+    --badge-bg: rgba(108, 92, 231, 0.12);
+    --badge-color: #6c5ce7;
+    --empty-state-bg: #f8f7fc;
+    --empty-state-border: rgba(0, 0, 0, 0.08);
+    --empty-state-color: #8886a2;
+    --toggle-bg: rgba(0, 0, 0, 0.05);
+    --toggle-color: #999;
+    --toggle-hover-bg: rgba(0, 0, 0, 0.1);
+    --toggle-hover-color: #555;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.container {
+    width: 100%;
+    max-width: 480px;
+}
+
+/* --- Theme Toggle (floating) --- */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--toggle-bg);
+    border: 1px solid var(--divider);
+    cursor: pointer;
+    color: var(--toggle-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s, border-color 0.3s;
+    z-index: 100;
+}
+
+.theme-toggle:hover {
+    background: var(--toggle-hover-bg);
+    color: var(--toggle-hover-color);
+}
+
+.theme-toggle svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+}
+
+.theme-toggle .icon-sun { display: none; }
+.theme-toggle .icon-moon { display: block; }
+[data-theme="light"] .theme-toggle .icon-sun { display: block; }
+[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+
+/* --- Centered Brand Header --- */
+.brand-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.brand-header img {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+}
+
+.brand-header span {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: 0.5px;
+}
+
+/* --- Card --- */
+.card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    border: 1px solid var(--bg-card-border);
+    padding: 32px;
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.card-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.card-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: 6px;
+}
+
+.card-header p {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* --- Form --- */
+.form-row {
+    display: flex;
+    gap: 14px;
+}
+
+.form-group {
+    flex: 1;
+    margin-bottom: 18px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-label);
+}
+
+input, textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s, background 0.2s;
+    outline: none;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 70px;
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--text-placeholder);
+}
+
+input:focus, textarea:focus {
+    border-color: var(--input-focus-border);
+    background: var(--input-focus-bg);
+}
+
+/* --- Divider --- */
+.divider {
+    height: 1px;
+    background: var(--divider);
+    margin: 6px 0 20px;
+}
+
+.section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+/* --- Buttons --- */
+.btn-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.save-btn {
+    flex: 1;
+    padding: 14px;
+    background: linear-gradient(135deg, #6c5ce7, #a855f7);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: opacity 0.15s, transform 0.1s;
+}
+
+.save-btn:hover {
+    opacity: 0.9;
+}
+
+.save-btn:active {
+    transform: scale(0.98);
+}
+
+.goback-btn {
+    padding: 14px 20px;
+    background: var(--btn-back-bg);
+    border: 1px solid var(--btn-back-border);
+    border-radius: 10px;
+    color: var(--btn-back-text);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.goback-btn:hover {
+    background: var(--btn-back-hover-bg);
+    color: var(--text-heading);
+}
+
+.goback-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* --- Status --- */
+#status {
+    text-align: center;
+    margin-top: 16px;
+    font-weight: 600;
+    font-size: 13px;
+    height: 20px;
+    transition: all 0.3s ease;
+}
+
+#status.success {
+    color: var(--success-color);
+}
+
+#status.error {
+    color: var(--error-color);
+}
+
+/* === CUSTOM FIELDS === */
+.custom-fields-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.custom-fields-header .section-title {
+    margin: 0;
+}
+
+.btn-add-field {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 14px;
+    background: linear-gradient(135deg, #6c5ce7, #a855f7);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: opacity 0.15s, transform 0.1s;
+}
+
+.btn-add-field:hover {
+    opacity: 0.85;
+}
+
+.btn-add-field:active {
+    transform: scale(0.95);
+}
+
+.btn-add-field svg {
+    width: 14px;
+    height: 14px;
+}
+
+.custom-field-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 14px;
+    animation: fadeSlideIn 0.25s ease;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.custom-field-row .form-group {
+    margin-bottom: 0;
+}
+
+.custom-field-label {
+    flex: 0.8;
+}
+
+.custom-field-value {
+    flex: 1.2;
+}
+
+.btn-remove-field {
+    width: 38px;
+    height: 42px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--remove-bg);
+    border: 1px solid var(--remove-border);
+    border-radius: 10px;
+    color: var(--error-color);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.btn-remove-field:hover {
+    background: var(--remove-hover-bg);
+}
+
+.btn-remove-field svg {
+    width: 16px;
+    height: 16px;
+}
+
+#customFieldsList:empty::after {
+    content: 'No custom fields added yet. Click \"+ Add Field\" to create one.';
+    display: block;
+    text-align: center;
+    padding: 20px;
+    font-size: 13px;
+    color: var(--empty-state-color);
+    font-style: italic;
+    background: var(--empty-state-bg);
+    border-radius: 10px;
+    border: 1px dashed var(--empty-state-border);
+}
+
+.field-count-badge {
+    font-size: 11px;
+    background: var(--badge-bg);
+    color: var(--badge-color);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    margin-left: 6px;
+}
