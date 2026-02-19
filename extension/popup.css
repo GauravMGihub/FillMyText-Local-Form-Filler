@@ -94,7 +94,7 @@
 }
 
 body {
-	width: 320px;
+	width: 380px;
 	font-family:
 		"Segoe UI",
 		-apple-system,
@@ -105,6 +105,7 @@ body {
 	transition:
 		background 0.3s ease,
 		color 0.3s ease;
+	overflow-x: hidden;
 }
 
 /* === SHARED === */

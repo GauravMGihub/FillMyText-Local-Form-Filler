@@ -72,21 +72,9 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 40px 20px;
-    transition: background 0.3s ease, color 0.3s ease;
-}
-
 .container {
     width: 100%;
-    max-width: 480px;
+    padding: 0 5px;
 }
 
 /* --- Theme Toggle (floating) --- */
@@ -106,6 +94,7 @@ body {
     justify-content: center;
     transition: background 0.15s, color 0.15s, border-color 0.3s;
     z-index: 100;
+    
 }
 
 .theme-toggle:hover {
@@ -149,9 +138,9 @@ body {
 /* --- Card --- */
 .card {
     background: var(--bg-card);
-    border-radius: 16px;
+    border-radius: 12px;
+    padding: 15px;
     border: 1px solid var(--bg-card-border);
-    padding: 32px;
     transition: background 0.3s ease, border-color 0.3s ease;
 }
 
@@ -420,4 +409,7 @@ input:focus, textarea:focus {
     border-radius: 10px;
     font-weight: 600;
     margin-left: 6px;
+}
+.theme-toggle {
+    display: none !important;
 }
