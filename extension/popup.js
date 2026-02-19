@@ -185,11 +185,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- THE INJECTED SCRIPT (React/Angular/Google Forms compatible) ---
 function autoFillScript(profile, customFields) {
-    console.log("GhostWriter running...", profile, "Custom fields:", customFields);
+    console.log("FillMyText running...", profile, "Custom fields:", customFields);
     let filledCount = 0;
     const isGoogleForms = window.location.hostname.includes('docs.google.com') && window.location.pathname.includes('/forms/');
 
-    console.log("GhostWriter: Google Forms detected =", isGoogleForms);
+    console.log("FillMyText: Google Forms detected =", isGoogleForms);
 
     // ===== VALUE SETTER (React/Angular/Google Forms compatible) =====
     const fillField = (input, value) => {
@@ -388,13 +388,13 @@ function autoFillScript(profile, customFields) {
     // ===== GOOGLE FORMS HANDLER =====
     // ===================================================================
     if (isGoogleForms) {
-        console.log("GhostWriter: Running Google Forms mode...");
+        console.log("FillMyText: Running Google Forms mode...");
 
         // Google Forms wraps each question in a container with data-params
         // The question title is inside nested divs/spans
         // Inputs are <input> or <textarea> inside the same container
         const questionBlocks = document.querySelectorAll('div[data-params]');
-        console.log(`GhostWriter: Found ${questionBlocks.length} Google Forms question blocks`);
+        console.log(`FillMyText: Found ${questionBlocks.length} Google Forms question blocks`);
 
         questionBlocks.forEach(block => {
             // Get the question title text
@@ -418,7 +418,7 @@ function autoFillScript(profile, customFields) {
 
             if (!titleText) return;
             const sig = titleText.toLowerCase();
-            console.log(`GhostWriter: Question found: "${titleText}"`);
+            console.log(`FillMyText: Question found: "${titleText}"`);
 
             const matchedValue = findMatchingValue(sig, '');
             if (!matchedValue) return;
@@ -427,7 +427,7 @@ function autoFillScript(profile, customFields) {
             const textInput = block.querySelector('input[type="text"], input:not([type]), textarea');
             if (textInput) {
                 fillField(textInput, matchedValue);
-                console.log(`GhostWriter: Filled "${titleText}" with "${matchedValue}"`);
+                console.log(`FillMyText: Filled "${titleText}" with "${matchedValue}"`);
                 return;
             }
 
@@ -444,7 +444,7 @@ function autoFillScript(profile, customFields) {
                         if (optText === matchedValue.toLowerCase() || optText.includes(matchedValue.toLowerCase())) {
                             opt.click();
                             filledCount++;
-                            console.log(`GhostWriter: Selected dropdown "${titleText}" → "${matchedValue}"`);
+                            console.log(`FillMyText: Selected dropdown "${titleText}" → "${matchedValue}"`);
                             break;
                         }
                     }
@@ -460,7 +460,7 @@ function autoFillScript(profile, customFields) {
                     if (radioText === matchedValue.toLowerCase() || radioText.includes(matchedValue.toLowerCase())) {
                         radio.click();
                         filledCount++;
-                        console.log(`GhostWriter: Selected radio "${titleText}" → "${matchedValue}"`);
+                        console.log(`FillMyText: Selected radio "${titleText}" → "${matchedValue}"`);
                         break;
                     }
                 }
@@ -477,7 +477,7 @@ function autoFillScript(profile, customFields) {
                         if (cb.getAttribute('aria-checked') !== 'true') {
                             cb.click();
                             filledCount++;
-                            console.log(`GhostWriter: Checked "${titleText}" → "${cbText}"`);
+                            console.log(`FillMyText: Checked "${titleText}" → "${cbText}"`);
                         }
                     }
                 }
@@ -519,5 +519,5 @@ function autoFillScript(profile, customFields) {
         });
     }
 
-    console.log(`GhostWriter filled ${filledCount} fields`);
+    console.log(`FillMyText filled ${filledCount} fields`);
 }
