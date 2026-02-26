@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="#features"><img src="https://img.shields.io/badge/Chrome-Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Chrome Extension"></a>
+  <a href="https://chromewebstore.google.com/detail/kiidpifplbekgeahbfoampkncghgmddf"><img src="https://img.shields.io/badge/Chrome%20Web%20Store-Install%20Now-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Install from Chrome Web Store"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/Manifest-V3-blueviolet?style=for-the-badge" alt="Manifest V3">
   <img src="https://img.shields.io/badge/Data-100%25%20Local-orange?style=for-the-badge&logo=shield&logoColor=white" alt="100% Local Data">
@@ -59,6 +59,18 @@ Existing auto-fill tools either required cloud accounts, stored data on external
 ---
 
 ## 🛠️ Installation
+
+### ⭐ Install from Chrome Web Store (Recommended)
+
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/kiidpifplbekgeahbfoampkncghgmddf">
+    <img src="https://img.shields.io/badge/⬇️%20Install%20FillMyText-Chrome%20Web%20Store-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white&labelColor=1a1a2e" alt="Install from Chrome Web Store" />
+  </a>
+</p>
+
+👉 **[Click here to install FillMyText from the Chrome Web Store](https://chromewebstore.google.com/detail/kiidpifplbekgeahbfoampkncghgmddf)** — one click and you're ready to go!
+
+---
 
 ### From Source (Developer Mode)
 
